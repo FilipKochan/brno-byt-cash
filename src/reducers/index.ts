@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import accountsReducer from './accountReducer'
+import dbReducer from './dbReducer'
 
 export default combineReducers({
-    db: accountsReducer
+    db: dbReducer
 })

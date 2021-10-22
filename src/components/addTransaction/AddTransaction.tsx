@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import AccountsSelect from '../accountsSelect/AccountsSelect'
 import { Formik, Form } from 'formik'
 import { Button, Box, CircularProgress } from '@mui/material'
-import { AccountsType, AccountType, FormikVals, ItemType } from '../../types'
+import { AccountsType, FormikVals, ItemType } from '../../types'
 import { fetchAccounts } from '../../actions'
 import { connect } from 'react-redux'
 import './AddTransaction.scss'
@@ -12,56 +12,87 @@ import TargetAccounts from '../targetAccounts/TargetAccounts'
 import SumTransaction from '../sumTransaction/SumTransaction'
 import db from '../../api'
 import _ from 'lodash'
+import SuccessAlert from '../successAlert/SuccessAlert'
 
 type Props = {
     fetchAccounts: () => any,
-    accounts: AccountsType
+    accounts: AccountsType,
+    fetchingAccounts: boolean
 }
 
-const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts }: Props) => {
+const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAccounts }: Props) => {
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submittedSuccessfully,
+        setSubmittedSuccesfully] = useState(false)
     const [submittedWithError, setSubmittedwithError] = useState(false)
+    const [formVals, setFormVals] = useState<FormikVals>({})
 
     useEffect(() => {
         fetchAccounts()
     }, [fetchAccounts])
 
-    const handleFormSubmit = async (vals: FormikVals) => {
-        setIsSubmitting(true)
-        const data: ItemType = {
-            created: parseInt(vals.account as string),
-            cost: parseInt(vals.cost as string),
-            targetAcc: (vals.targetAccounts as string[]).map(id => parseInt(id)),
-            desc: vals.description as string
-        }
-
-        const res = await db.post('/transactionsHistory', data)
-        if (res.status !== 201) {
-            return
-        }
-
-
-        // if (accRes.status !== 200) {
-        //     return
-        // }
+    const handleNextTransaction = () => {
         setIsSubmitting(false)
+        setSubmittedSuccesfully(false)
+        setSubmittedwithError(false)
     }
 
-    const getNewAccounts = ({ targetAcc, cost, created }: ItemType): AccountsType => {
-        const itemCost = Math.floor(cost / targetAcc.length)
+    const handleFormSubmit = async (vals: FormikVals) => {
+        console.log('started once')
+        setFormVals(vals)
+        setIsSubmitting(true)
+        fetchAccounts()
+    }
 
-        let accounts_aux = _.cloneDeep(accounts.filter(({ id }) => id !== created))
+    useEffect(() => {
+        const getNewAccounts = ({ targetAcc, cost, created }: ItemType): AccountsType => {
+            const itemCost = Math.floor(cost / targetAcc.length)
 
-        targetAcc.forEach(acc => {
-            const recipient = accounts_aux.find(({ id }) => id === acc)
-            if (recipient) {
-                recipient.owesTo[created] = (recipient.owesTo[created] ?? 0) + itemCost
-                accounts_aux[acc] = recipient
+            const filtered = accounts.filter(({ id }) => {
+                return id.toString() !== created.toString()
+            })
+
+            let accounts_aux = _.cloneDeep(filtered)
+            let result: AccountsType = []
+            targetAcc.forEach(acc => {
+                const recipient = accounts_aux.find(({ id }) => id === acc)
+                if (recipient) {
+                    recipient.owesTo[created] = (recipient.owesTo[created] ?? 0) + itemCost
+                    result = [...result, recipient]
+                }
+            })
+            return result
+        }
+
+        const submitFormValues = async () => {
+            const data: ItemType = {
+                created: (formVals.account as string),
+                cost: parseInt(formVals.cost as string),
+                targetAcc: (formVals.targetAccounts as string[]).map(id => parseInt(id)),
+                desc: formVals.description as string
             }
-        })
 
-        return accounts_aux
-    }
+            const res = await db.post('/transactionsHistory', data)
+            if (res.status !== 201) {
+                return
+            }
+
+            const newAccounts = getNewAccounts(data)
+            for (let newAccount of newAccounts) {
+                const accPutRes = await db.put(`/accounts/${newAccount.id}`, newAccount)
+                if (accPutRes.status !== 200) {
+                    return
+                }
+            }
+            setIsSubmitting(false)
+            setSubmittedSuccesfully(true)
+        }
+
+        if (!fetchingAccounts && isSubmitting) {
+            submitFormValues()
+        }
+        // eslint-disable-next-line
+    }, [fetchingAccounts])
 
     const isFilled = (values: FormikVals) => {
         for (let key of Object.keys(values)) {
@@ -107,31 +138,44 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts }: Props) => 
     }
 
     return (
-        <Formik enableReinitialize initialValues={initialValues} onSubmit={handleFormSubmit} validate={validate}>
-            {({ values, errors }: any) => {
-                return (
-                    <Form>
-                        <Box className="root" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                            <AccountsSelect />
-                            <TransactionDescription />
-                            <TransactionCost />
-                            <TargetAccounts values={values.targetAccounts} error={errors.targetAccounts} />
-                            {isFilled(values) && !Object.keys(errors).length && <SumTransaction formValues={values} />}
-                            {isSubmitting
-                                ? <CircularProgress />
-                                : <Button type="submit">
-                                    Potvrdit
-                                </Button>}
-                        </Box>
-                    </Form>
-                )
-            }}
-        </Formik>
+        <Box sx={{ maxWidth: 400, margin: 'auto' }}>
+            {submittedSuccessfully && <SuccessAlert
+                success
+                handleNextTransaction={handleNextTransaction}
+            />}
+
+            {submittedWithError && <SuccessAlert
+                handleNextTransaction={handleNextTransaction}
+            />}
+
+            {!submittedSuccessfully && !submittedWithError && (
+                <Formik enableReinitialize initialValues={initialValues} onSubmit={handleFormSubmit} validate={validate}>
+                    {({ values, errors }: any) => {
+                        return (
+                            <Form>
+                                <Box className="root" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                                    <AccountsSelect />
+                                    <TransactionDescription />
+                                    <TransactionCost />
+                                    <TargetAccounts values={values.targetAccounts} error={errors.targetAccounts} />
+                                    {isFilled(values) && !Object.keys(errors).length && <SumTransaction formValues={values} />}
+                                    {isSubmitting
+                                        ? <CircularProgress />
+                                        : <Button type="submit">
+                                            Potvrdit
+                                        </Button>}
+                                </Box>
+                            </Form>
+                        )
+                    }}
+                </Formik>
+            )}
+        </Box>
     )
 }
 
 const mapStateToProps = (state: any) => {
-    return { accounts: state.db.accounts }
+    return { accounts: state.db.accounts, fetchingAccounts: state.db.fetchingAccounts }
 }
 
 export default connect(mapStateToProps, { fetchAccounts })(AddTransaction)

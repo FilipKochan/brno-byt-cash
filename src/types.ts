@@ -1,14 +1,15 @@
 export type ItemType = {
-    created: number,
+    created: string,
     cost: number,
     targetAcc: number[],
-    desc: string
+    desc: string,
+    id?: number
 }
 
 export type AccountType = {
     name: string,
     id: number,
-    owesTo: { [key: number]: number }
+    owesTo: { [key: string]: number }
 }
 
 export type AccountsType = AccountType[]

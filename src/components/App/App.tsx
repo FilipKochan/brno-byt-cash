@@ -1,14 +1,21 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import AddTransaction from '../addTransaction/AddTransaction';
+import TransactionsList from '../transactionsList/TransactionsList';
+import { Route, Router } from 'react-router'
+import history from '../../history'
 import './App.scss'
+import Header from '../header/Header';
 
 function App() {
   return (
-    <Box className="root">
-      <Typography component='h1' sx={{ textAlign: 'center', fontSize: '2.5rem', fontWeight: 'bold' }}>Where's my money?</Typography>
-      <AddTransaction />
-    </Box>
+    <Router history={history}>
+      <Box className="root">
+        <Header />
+        <Route path="/add" exact component={AddTransaction} />
+        <Route path="/list" exact component={TransactionsList} />
+      </Box>
+    </Router>
   );
 }
 

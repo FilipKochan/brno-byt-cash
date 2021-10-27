@@ -3,7 +3,8 @@ export type ItemType = {
     cost: number,
     targetAcc: number[],
     desc: string,
-    id?: number
+    id?: number,
+    date: string
 }
 
 export type AccountType = {

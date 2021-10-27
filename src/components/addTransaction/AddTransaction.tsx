@@ -69,7 +69,8 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAcco
                 created: (formVals.account as string),
                 cost: parseInt(formVals.cost as string),
                 targetAcc: (formVals.targetAccounts as string[]).map(id => parseInt(id)),
-                desc: formVals.description as string
+                desc: formVals.description as string,
+                date: new Date().toString()
             }
 
             const res = await db.post('/transactionsHistory', data)

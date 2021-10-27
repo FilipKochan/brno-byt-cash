@@ -11,6 +11,7 @@ const Header = () => {
             <Box className="navbar">
                 <Link to='/add'>Přidat položku</Link>
                 <Link to='/list'>Historie transakcí</Link>
+                <Link to='/account'>Výpis účtu</Link>
             </Box>
             <Typography component='h1' sx={{ textAlign: 'center', fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '3rem', marginTop: '5rem' }}>Where's my money?</Typography>
         </Box>

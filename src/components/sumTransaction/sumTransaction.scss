@@ -3,7 +3,9 @@
     padding: .2em;
     border-radius: 5px;
     white-space: nowrap;
-
+    @media (prefers-color-scheme: dark) {
+        color: #000
+    }
 }
 .sumRoot {
     margin-top: 0;

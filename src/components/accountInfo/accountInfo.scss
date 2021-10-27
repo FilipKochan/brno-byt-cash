@@ -1,0 +1,17 @@
+.account-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accounts-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .owes-more {
+        background-color: lightcoral;
+    }
+    .owes-less {
+        background-color: springgreen;
+    }
+}

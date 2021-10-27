@@ -1,4 +1,6 @@
 import {
+    Box,
+    Button,
     CircularProgress,
     Paper,
     TableContainer,
@@ -8,11 +10,13 @@ import {
     TableBody,
     TableCell
 } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { fetchTransactions, fetchAccounts } from '../../actions'
 import { TransactionHistory } from '../../types'
 import _ from 'lodash'
+import { format } from 'date-fns'
+import { cs } from 'date-fns/locale'
 
 type Props = {
     fetchTransactions: () => any,
@@ -27,6 +31,8 @@ const TransactionsList: React.FC<Props> = ({
     transactions,
     accountNames
 }: Props) => {
+    const [offset, setOffset] = useState<number>(0)
+    const limit = 10
 
     useEffect(() => {
         fetchTransactions()
@@ -38,30 +44,46 @@ const TransactionsList: React.FC<Props> = ({
 
     return (
         transactions
-            ? <TableContainer sx={{ maxWidth: 700, margin: 'auto' }} component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Z účtu</TableCell>
-                            <TableCell>Na účty</TableCell>
-                            <TableCell>Částka</TableCell>
-                            <TableCell>Popis</TableCell>
-                            <TableCell>Datum</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {transactions.map(item => (
-                            <TableRow key={item.id}>
-                                <TableCell>{accountNames[parseInt(item.created)]}</TableCell>
-                                <TableCell>{item.targetAcc.map(id => accountNames[id]).join(', ')}</TableCell>
-                                <TableCell>{item.cost} Kč</TableCell>
-                                <TableCell>{item.desc}</TableCell>
-                                <TableCell>__?__</TableCell>
+            ? (<Box sx={{ maxWidth: 700, margin: 'auto' }}>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Z účtu</TableCell>
+                                <TableCell>Na účty</TableCell>
+                                <TableCell>Částka</TableCell>
+                                <TableCell>Popis</TableCell>
+                                <TableCell>Datum</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {transactions.slice(offset, limit + offset).map(item => (
+                                <TableRow key={item.id}>
+                                    <TableCell>{accountNames[parseInt(item.created)]}</TableCell>
+                                    <TableCell>{item.targetAcc.map(id => accountNames[id]).join(', ')}</TableCell>
+                                    <TableCell>{item.cost} Kč</TableCell>
+                                    <TableCell>{item.desc}</TableCell>
+                                    <TableCell>{format(new Date(item.date), 'do LLLL yyyy', { locale: cs })}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBlock: '1rem'
+                }}>
+                    <Button
+                        onClick={() => setOffset(Math.max(0, offset - limit))}
+                        disabled={offset === 0}
+                    >Předchozí</Button>
+                    <Button
+                        disabled={offset + limit > transactions.length - 1}
+                        onClick={() => setOffset(Math.min(transactions.length - 1, offset + limit))}
+                    >Další</Button>
+                </Box>
+            </Box>)
             : <CircularProgress sx={{ margin: 'auto' }} />
     )
 }

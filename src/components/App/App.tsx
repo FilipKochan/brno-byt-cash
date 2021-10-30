@@ -8,6 +8,8 @@ import history from '../../history'
 import './App.scss'
 import Header from '../header/Header';
 import { ThemeProvider } from '@mui/system';
+import Home from '../Home';
+import HlacikJeRetard from '../HlacikJeRetard';
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -27,9 +29,11 @@ function App() {
         <Paper className="paper">
           <Box className="root">
             <Header />
+            <Route path="/" exact component={Home} />
             <Route path="/add" exact component={AddTransaction} />
             <Route path="/list" exact component={TransactionsList} />
             <Route path="/account" exact component={AccountDetail} />
+            <Route path="/hlacikjeretard" exact component={HlacikJeRetard} />
           </Box>
         </Paper>
       </Router>

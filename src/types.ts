@@ -1,15 +1,23 @@
 export type ItemType = {
     created: string,
     cost: number,
-    targetAcc: number[],
+    targetAcc: string[],
     desc: string,
     id?: number,
+    _id?: string,
+    date: string
+}
+
+export type ItemDBType = {
+    created: string,
+    cost: number,
+    desc: string,
     date: string
 }
 
 export type AccountType = {
     name: string,
-    id: number,
+    id: string,
     owesTo: { [key: string]: number }
 }
 

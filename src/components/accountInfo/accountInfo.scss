@@ -3,11 +3,17 @@
     justify-content: space-between;
     align-items: center;
 }
+.account-title {
+    padding-block: 1rem;
+}
 .accounts-box {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
 
+    border: 2px solid;
+    border-radius: 5px;
+    padding: 1rem;
     .owes-more {
         background-color: lightcoral;
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import AccountsSelect from '../accountsSelect/AccountsSelect'
 import { Formik, Form } from 'formik'
-import { Button, Box, CircularProgress } from '@mui/material'
+import { Button, Box } from '@mui/material'
 import { AccountsType, FormikVals, ItemType } from '../../types'
 import { fetchAccounts } from '../../actions'
 import { connect } from 'react-redux'
@@ -13,6 +13,8 @@ import SumTransaction from '../sumTransaction/SumTransaction'
 import db from '../../api'
 import _ from 'lodash'
 import SuccessAlert from '../successAlert/SuccessAlert'
+import { AxiosResponse } from 'axios'
+import CustomLoading from '../CustomLoading'
 
 type Props = {
     fetchAccounts: () => any,
@@ -38,7 +40,6 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAcco
     }
 
     const handleFormSubmit = async (vals: FormikVals) => {
-        console.log('started once')
         setFormVals(vals)
         setIsSubmitting(true)
         fetchAccounts()
@@ -47,15 +48,14 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAcco
     useEffect(() => {
         const getNewAccounts = ({ targetAcc, cost, created }: ItemType): AccountsType => {
             const itemCost = Math.floor(cost / targetAcc.length)
-
             const filtered = accounts.filter(({ id }) => {
                 return id.toString() !== created.toString()
             })
-
-            let accounts_aux = _.cloneDeep(filtered)
             let result: AccountsType = []
             targetAcc.forEach(acc => {
-                const recipient = accounts_aux.find(({ id }) => id === acc)
+                const recipient = filtered.find(({ id }) => {
+                    return id.toString() === acc.toString()
+                })
                 if (recipient) {
                     recipient.owesTo[created] = (recipient.owesTo[created] ?? 0) + itemCost
                     result = [...result, recipient]
@@ -68,23 +68,45 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAcco
             const data: ItemType = {
                 created: (formVals.account as string),
                 cost: parseInt(formVals.cost as string),
-                targetAcc: (formVals.targetAccounts as string[]).map(id => parseInt(id)),
+                targetAcc: (formVals.targetAccounts as string[]),
                 desc: formVals.description as string,
                 date: new Date().toString()
             }
 
-            const res = await db.post('/transactionsHistory', data)
+            const res: AxiosResponse<ItemType> = await db.post('/transactionhistory', data)
             if (res.status !== 201) {
                 return
             }
+            const transactionId = res.data.id
+            for (let t of data.targetAcc) {
+                db.post('/itemaccounts', {
+                    transactionid: transactionId,
+                    accountid: t
+                })
+            }
 
             const newAccounts = getNewAccounts(data)
-            for (let newAccount of newAccounts) {
-                const accPutRes = await db.put(`/accounts/${newAccount.id}`, newAccount)
-                if (accPutRes.status !== 200) {
-                    return
-                }
+
+            const res_ = await db.get('/owesto')
+            const owesToArr = res_.data as [{
+                _id: string,
+                rootaccount: string,
+                targetaccount: string,
+                ammount: number
+            }]
+
+            for (let acc of newAccounts) {
+                _.map(acc.owesTo, (val, key) => {
+                    const id = owesToArr.find(({ rootaccount, targetaccount }) => {
+                        return rootaccount === acc.id.toString() && targetaccount === key
+                    })?._id
+
+                    if (id) {
+                        db.put(`/owesto/${id}`, { ammount: val })
+                    }
+                })
             }
+
             setIsSubmitting(false)
             setSubmittedSuccesfully(true)
         }
@@ -161,7 +183,7 @@ const AddTransaction: React.FC<Props> = ({ fetchAccounts, accounts, fetchingAcco
                                     <TargetAccounts values={values.targetAccounts} error={errors.targetAccounts} />
                                     {isFilled(values) && !Object.keys(errors).length && <SumTransaction formValues={values} />}
                                     {isSubmitting
-                                        ? <CircularProgress />
+                                        ? <CustomLoading />
                                         : <Button type="submit">
                                             Potvrdit
                                         </Button>}

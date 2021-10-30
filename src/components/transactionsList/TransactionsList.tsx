@@ -1,7 +1,6 @@
 import {
     Box,
     Button,
-    CircularProgress,
     Paper,
     TableContainer,
     Table,
@@ -17,19 +16,24 @@ import { TransactionHistory } from '../../types'
 import _ from 'lodash'
 import { format } from 'date-fns'
 import { cs } from 'date-fns/locale'
+import CustomLoading from '../CustomLoading'
 
 type Props = {
     fetchTransactions: () => any,
     fetchAccounts: () => any,
     transactions: TransactionHistory,
-    accountNames: { [key: number]: string }
+    accountNames: { [key: string]: string },
+    fetchingTransactions: boolean,
+    fetchingAccounts: boolean
 }
 
 const TransactionsList: React.FC<Props> = ({
     fetchTransactions,
     fetchAccounts,
     transactions,
-    accountNames
+    accountNames,
+    fetchingTransactions,
+    fetchingAccounts
 }: Props) => {
     const [offset, setOffset] = useState<number>(0)
     const limit = 10
@@ -43,7 +47,7 @@ const TransactionsList: React.FC<Props> = ({
     }, [fetchAccounts])
 
     return (
-        transactions
+        transactions && !fetchingAccounts && !fetchingTransactions
             ? (<Box sx={{ maxWidth: 700, margin: 'auto' }}>
                 <TableContainer component={Paper}>
                     <Table>
@@ -59,7 +63,7 @@ const TransactionsList: React.FC<Props> = ({
                         <TableBody>
                             {transactions.slice(offset, limit + offset).map(item => (
                                 <TableRow key={item.id}>
-                                    <TableCell>{accountNames[parseInt(item.created)]}</TableCell>
+                                    <TableCell>{accountNames[item.created]}</TableCell>
                                     <TableCell>{item.targetAcc.map(id => accountNames[id]).join(', ')}</TableCell>
                                     <TableCell>{item.cost} Kč</TableCell>
                                     <TableCell>{item.desc}</TableCell>
@@ -84,13 +88,15 @@ const TransactionsList: React.FC<Props> = ({
                     >Další</Button>
                 </Box>
             </Box>)
-            : <CircularProgress sx={{ margin: 'auto' }} />
+            : <CustomLoading />
     )
 }
 
 const mapStateToProps = (state: any) => {
     return {
-        transactions: state.db.transactions?.reverse(),
+        transactions: state.db.transactions,
+        fetchingTransactions: state.db.fetchingTransactions,
+        fetchingAccounts: state.db.fetchingAccounts,
         accountNames: _.mapValues(_.keyBy(state.db.accounts, 'id'), 'name')
     }
 }

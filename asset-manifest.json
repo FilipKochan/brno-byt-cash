@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/brno-byt-cash/static/css/main.b8a41711.chunk.css",
-    "main.js": "/brno-byt-cash/static/js/main.3e54040a.chunk.js",
-    "main.js.map": "/brno-byt-cash/static/js/main.3e54040a.chunk.js.map",
+    "main.js": "/brno-byt-cash/static/js/main.310ad65a.chunk.js",
+    "main.js.map": "/brno-byt-cash/static/js/main.310ad65a.chunk.js.map",
     "runtime-main.js": "/brno-byt-cash/static/js/runtime-main.578a49e6.js",
     "runtime-main.js.map": "/brno-byt-cash/static/js/runtime-main.578a49e6.js.map",
     "static/js/2.7e9fd33a.chunk.js": "/brno-byt-cash/static/js/2.7e9fd33a.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.578a49e6.js",
     "static/js/2.7e9fd33a.chunk.js",
     "static/css/main.b8a41711.chunk.css",
-    "static/js/main.3e54040a.chunk.js"
+    "static/js/main.310ad65a.chunk.js"
   ]
 }

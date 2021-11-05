@@ -49,8 +49,8 @@ const TransactionsList: React.FC<Props> = ({
     return (
         transactions && !fetchingAccounts && !fetchingTransactions
             ? (<Box sx={{ maxWidth: 700, margin: 'auto' }}>
-                <TableContainer component={Paper}>
-                    <Table>
+                <TableContainer component={Paper} sx={{ overflow: 'auto' }}>
+                    <Table sx={{ minWidth: '600px' }}>
                         <TableHead>
                             <TableRow>
                                 <TableCell>Z účtu</TableCell>

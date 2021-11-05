@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Paper, Box, useMediaQuery, createTheme } from '@mui/material'
 import AddTransaction from '../addTransaction/AddTransaction';
 import TransactionsList from '../transactionsList/TransactionsList';
@@ -13,9 +13,6 @@ import HlacikJeRetard from '../HlacikJeRetard';
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  useEffect(() => {
-    history.push('/brno-byt-cash')
-  })
 
   const theme = useMemo(
     () => createTheme({
@@ -32,11 +29,11 @@ function App() {
         <Paper className="paper">
           <Box className="root">
             <Header />
-            <Route path="/brno-byt-cash/" exact component={Home} />
-            <Route path="/brno-byt-cash/add" exact component={AddTransaction} />
-            <Route path="/brno-byt-cash/list" exact component={TransactionsList} />
-            <Route path="/brno-byt-cash/account" exact component={AccountDetail} />
-            <Route path="/brno-byt-cash/hlacikjeretard" exact component={HlacikJeRetard} />
+            <Route path="/" exact component={Home} />
+            <Route path="/add" exact component={AddTransaction} />
+            <Route path="/list" exact component={TransactionsList} />
+            <Route path="/account" exact component={AccountDetail} />
+            <Route path="/hlacikjeretard" exact component={HlacikJeRetard} />
           </Box>
         </Paper>
       </Router>

@@ -48,9 +48,13 @@ const AccountInfo: React.FC<Props> = ({
                     {_.map(account.owesTo, (val, key) => {
                         const owes = countOwes(key, val)
                         return (
-                            <Box key={key} className="account-row">
+                            <Box key={key} className="account-row" sx={{
+                                flexDirection: ['column', 'row']
+                            }}>
                                 <Box>Účtu <span className="highlight">{getAccountName(key)}</span> dluží <span className={'highlight ' + (owes && owes > 0 ? 'owes-more' : 'owes-less')}>{owes} Kč</span>.</Box>
-                                <Button onClick={() => setVisibleDialog(key)}>Vyrovnat účty</Button>
+                                <Button
+                                    sx={{ paddingTop: ['.5rem'] }}
+                                    onClick={() => setVisibleDialog(key)}>Vyrovnat účty</Button>
                                 <ConfirmEvenAccounts
                                     open={visibleDialog === key}
                                     acc1Id={account.id}

@@ -18,7 +18,12 @@ const TargetAccounts: React.FC<Props> = ({ values, error, accounts }: Props) => 
         <Box sx={{ width: '100%', padding: '0 1rem' }}>
             <FormControl error={error ? true : false}>
                 <FormLabel component="legend">Rozdělit mezi účty:</FormLabel>
-                <FormGroup sx={{ display: 'flex', flexDirection: 'row', gap: '3rem' }}>
+                <FormGroup sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    gap: [0, '3rem']
+                }}>
                     {accounts.map(({ name, id }) => (
                         <Field
                             key={id}

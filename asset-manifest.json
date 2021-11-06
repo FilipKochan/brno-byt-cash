@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/brno-byt-cash/static/css/main.1b86ab23.chunk.css",
-    "main.js": "/brno-byt-cash/static/js/main.67a89e25.chunk.js",
-    "main.js.map": "/brno-byt-cash/static/js/main.67a89e25.chunk.js.map",
+    "main.js": "/brno-byt-cash/static/js/main.4b5235d0.chunk.js",
+    "main.js.map": "/brno-byt-cash/static/js/main.4b5235d0.chunk.js.map",
     "runtime-main.js": "/brno-byt-cash/static/js/runtime-main.578a49e6.js",
     "runtime-main.js.map": "/brno-byt-cash/static/js/runtime-main.578a49e6.js.map",
-    "static/js/2.c09033e6.chunk.js": "/brno-byt-cash/static/js/2.c09033e6.chunk.js",
-    "static/js/2.c09033e6.chunk.js.map": "/brno-byt-cash/static/js/2.c09033e6.chunk.js.map",
+    "static/js/2.02589124.chunk.js": "/brno-byt-cash/static/js/2.02589124.chunk.js",
+    "static/js/2.02589124.chunk.js.map": "/brno-byt-cash/static/js/2.02589124.chunk.js.map",
     "index.html": "/brno-byt-cash/index.html",
     "static/css/main.1b86ab23.chunk.css.map": "/brno-byt-cash/static/css/main.1b86ab23.chunk.css.map",
-    "static/js/2.c09033e6.chunk.js.LICENSE.txt": "/brno-byt-cash/static/js/2.c09033e6.chunk.js.LICENSE.txt"
+    "static/js/2.02589124.chunk.js.LICENSE.txt": "/brno-byt-cash/static/js/2.02589124.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.578a49e6.js",
-    "static/js/2.c09033e6.chunk.js",
+    "static/js/2.02589124.chunk.js",
     "static/css/main.1b86ab23.chunk.css",
-    "static/js/main.67a89e25.chunk.js"
+    "static/js/main.4b5235d0.chunk.js"
   ]
 }

@@ -6,7 +6,8 @@ import {
     FETCHING_ACCOUNTS,
     FETCH_TRANSACTIONS,
     FETCHING_TRANSACTIONS,
-    FETCH_MEME
+    FETCH_MEME,
+    FETCHING_MEME
 } from "./types"
 import _ from 'lodash'
 
@@ -75,6 +76,10 @@ export const fetchTransactions = () => async (dispatch: Dispatch<any>) => {
 }
 
 export const fetchMeme = () => async (dispatch: Dispatch<any>) => {
+    dispatch({
+        type: FETCHING_MEME,
+        payload: true
+    })
     const res = await memeapi.get('/gimme') as {
         data: {
             url: string, title: string, postLink: string
@@ -88,5 +93,10 @@ export const fetchMeme = () => async (dispatch: Dispatch<any>) => {
             title: res.data.title,
             postLink: res.data.postLink
         }
+    })
+
+    dispatch({
+        type: FETCHING_MEME,
+        payload: false
     })
 }

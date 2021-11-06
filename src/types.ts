@@ -33,3 +33,8 @@ export type ActionType = {
 }
 
 export type FormikVals = { [key: string]: string | string[] }
+
+export type NavbarItemType = {
+    name: string,
+    path: string
+}

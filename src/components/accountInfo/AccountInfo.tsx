@@ -54,7 +54,9 @@ const AccountInfo: React.FC<Props> = ({
                                 <Box>Účtu <span className="highlight">{getAccountName(key)}</span> dluží <span className={'highlight ' + (owes && owes > 0 ? 'owes-more' : 'owes-less')}>{owes} Kč</span>.</Box>
                                 <Button
                                     sx={{ paddingTop: ['.5rem'] }}
-                                    onClick={() => setVisibleDialog(key)}>Vyrovnat účty</Button>
+                                    onClick={() => setVisibleDialog(key)}
+                                    disabled={owes === 0}
+                                >Vyrovnat účty</Button>
                                 <ConfirmEvenAccounts
                                     open={visibleDialog === key}
                                     acc1Id={account.id}

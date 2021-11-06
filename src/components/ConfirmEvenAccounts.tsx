@@ -1,8 +1,9 @@
 import React from 'react'
 import { Button, Dialog, DialogActions, DialogContent } from '@mui/material'
 import db from '../api'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { fetchAccounts } from '../actions'
+import { FETCHING_ACCOUNTS } from '../actions/types'
 
 type Props = {
     open: boolean,
@@ -23,7 +24,10 @@ const ConfirmEvenAccounts: React.FC<Props> = ({
     handleClose,
     fetchAccounts
 }: Props) => {
+    const dispatch = useDispatch()
+
     const evenAccounts = async () => {
+        dispatch({ type: FETCHING_ACCOUNTS, payload: true })
         handleClose()
         const res_ = await db.get('/owesto')
         const owesToArr = res_.data as [{
